@@ -90,7 +90,7 @@
           <tr>
             <td style="font-weight: 600;">{{ inc.id }}</td>
             <td>{{ inc.title }}</td>
-            <td><span style="color: var(--accent-cyan);">{{ inc.severity | uppercase }}</span></td>
+            <td><span style="color: var(--accent-cyan);">{{ inc.severity | upper }}</span></td>
             <td><code>{{ inc.component }}</code></td>
             <td><span class="badge {{ inc.status }}">{{ inc.status }}</span></td>
             <td style="color: var(--text-muted);">{{ inc.timestamp }}</td>
