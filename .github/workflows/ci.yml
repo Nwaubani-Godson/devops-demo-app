@@ -42,6 +42,9 @@ jobs:
     needs: test-and-lint
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -49,8 +52,9 @@ jobs:
       - name: Configure AWS OIDC Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+          role-to-assume: arn:aws:iam::654654484434:role/GitHubActionsRole-DevOpsDemo
+          aws-region: us-east-1
+          role-session-name: GitHubActions-AppBuild
 
       - name: Log in to Amazon ECR
         id: login-ecr
@@ -71,6 +75,6 @@ jobs:
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
-          repository: ${{ github.repository_owner }}/devops-demo-infra
+          repository: Nwaubani-Godson/devops-demo-infra
           event-type: app-image-updated
           client-payload: '{"image_tag": "git-${{ github.sha }}", "environment": "dev"}'
