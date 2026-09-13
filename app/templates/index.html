@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Pulse — Platform Operations Center</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <h1>DevOps Pulse Platform</h1>
+      </div>
+      <div>
+        <span class="env-badge {{ environment }}">{{ environment }}</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-banner">
+      <div class="hero-text">
+        <h2>Live System Telemetry & GitOps State</h2>
+        <p>Operational control plane monitoring application metrics, health, and container state.</p>
+      </div>
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        <span>ALL SYSTEMS OPERATIONAL</span>
+      </div>
+    </section>
+
+    <section class="grid-3">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Target Environment</span>
+          <span class="card-icon">☁️</span>
+        </div>
+        <div class="card-value">{{ environment }}</div>
+        <div class="card-subtext">AWS ECS Fargate Task</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Git Release Artifact</span>
+          <span class="card-icon">📦</span>
+        </div>
+        <div class="card-value" style="font-size: 1.25rem; word-break: break-all;">{{ app_version }}</div>
+        <div class="card-subtext">Immutable Amazon ECR Tag</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Telemetry Standard</span>
+          <span class="card-icon">📊</span>
+        </div>
+        <div class="card-value">OpenMetrics</div>
+        <div class="card-subtext"><a href="/metrics" style="color: var(--accent-cyan); text-decoration: none;" target="_blank">View /metrics endpoint ↗</a></div>
+      </div>
+    </section>
+
+    <section class="controls-card">
+      <div>
+        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem;">Live Demo Feature (TASK-101)</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Simulate high request latency or artificial exceptions to trigger Grafana metric spikes.</p>
+      </div>
+      <div style="display: flex; gap: 0.75rem;">
+        <button id="btn-incident" class="btn">Log Test Incident</button>
+        <button id="btn-chaos" class="btn btn-danger">Simulate Chaos (TASK-101)</button>
+      </div>
+    </section>
+
+    <h3 class="section-title"><span>⚠️</span> Recorded Platform Incidents</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Incident ID</th>
+            <th>Title</th>
+            <th>Severity</th>
+            <th>Component</th>
+            <th>Status</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody id="incidents-body">
+          {% for inc in incidents %}
+          <tr>
+            <td style="font-weight: 600;">{{ inc.id }}</td>
+            <td>{{ inc.title }}</td>
+            <td><span style="color: var(--accent-cyan);">{{ inc.severity | uppercase }}</span></td>
+            <td><code>{{ inc.component }}</code></td>
+            <td><span class="badge {{ inc.status }}">{{ inc.status }}</span></td>
+            <td style="color: var(--text-muted);">{{ inc.timestamp }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <p>DevOps Demo Platform &bull; FastAPI + AWS ECS Fargate + Terraform + Ansible &bull; GitOps Driven</p>
+  </footer>
+
+  <script>
+    document.getElementById('btn-incident').addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/v1/incidents', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: "Manual Demo Incident Triggered",
+            severity: "medium",
+            component: "fastapi-gateway",
+            description: "Logged directly from dashboard UI"
+          })
+        });
+        if (res.ok) {
+          window.location.reload();
+        }
+      } catch (err) {
+        alert("Failed to log incident: " + err);
+      }
+    });
+
+    document.getElementById('btn-chaos').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-chaos');
+      btn.innerText = "Simulating Chaos...";
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/v1/chaos/trigger', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ duration_seconds: 1.5, error_rate: 0.8 })
+        });
+        const data = await res.json();
+        alert(JSON.stringify(data, null, 2));
+      } catch (err) {
+        alert("Chaos completed with expected exception! Check Prometheus / Grafana metrics.");
+      } finally {
+        btn.innerText = "Simulate Chaos (TASK-101)";
+        btn.disabled = false;
+        window.location.reload();
+      }
+    });
+  </script>
+</body>
+</html>
