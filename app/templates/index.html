@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DevOps Pulse — Platform Operations Center</title>
   <link rel="stylesheet" href="/static/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
+
 <body>
   <header>
     <div class="header-container">
@@ -57,14 +60,16 @@
           <span class="card-icon">📊</span>
         </div>
         <div class="card-value">OpenMetrics</div>
-        <div class="card-subtext"><a href="/metrics" style="color: var(--accent-cyan); text-decoration: none;" target="_blank">View /metrics endpoint ↗</a></div>
+        <div class="card-subtext"><a href="/metrics" style="color: var(--accent-cyan); text-decoration: none;"
+            target="_blank">View /metrics endpoint ↗</a></div>
       </div>
     </section>
 
     <section class="controls-card">
       <div>
         <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem;">Live Demo Feature (TASK-101)</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted);">Simulate high request latency or artificial exceptions to trigger Grafana metric spikes.</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Simulate high request latency or artificial exceptions
+          to trigger Grafana metric spikes.</p>
       </div>
       <div style="display: flex; gap: 0.75rem;">
         <button id="btn-incident" class="btn">Log Test Incident</button>
@@ -148,4 +153,5 @@
     });
   </script>
 </body>
+
 </html>
