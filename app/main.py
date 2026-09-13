@@ -43,6 +43,7 @@ if os.path.exists(static_dir):
 
 templates = Jinja2Templates(directory=templates_dir)
 
+
 # Middleware for request telemetry
 @app.middleware("http")
 async def prometheus_telemetry_middleware(request: Request, call_next):
@@ -63,6 +64,7 @@ async def prometheus_telemetry_middleware(request: Request, call_next):
 
     return response
 
+
 # In-Memory Incident Store (for demo purposes)
 incidents_db = [
     {
@@ -75,15 +77,18 @@ incidents_db = [
     }
 ]
 
+
 class IncidentPayload(BaseModel):
     title: str
     severity: str  # low, medium, high, critical
     component: str
     description: Optional[str] = "Manual incident created during live demo"
 
+
 class ChaosPayload(BaseModel):
     duration_seconds: float = 2.0
     error_rate: float = 0.5  # 50% failure rate simulation
+
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -101,6 +106,7 @@ async def read_root(request: Request):
         }
     )
 
+
 @app.get("/health")
 async def health_check():
     """
@@ -113,12 +119,14 @@ async def health_check():
         "version": os.getenv("APP_VERSION", "1.0.0")
     }
 
+
 @app.get("/metrics")
 async def metrics():
     """
     Prometheus Scrape Endpoint
     """
     return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
 
 @app.get("/api/v1/status")
 async def get_status():
@@ -137,12 +145,14 @@ async def get_status():
         "environment": os.getenv("ENVIRONMENT", "dev")
     }
 
+
 @app.get("/api/v1/incidents")
 async def list_incidents():
     """
     List all recorded incidents
     """
     return {"incidents": incidents_db}
+
 
 @app.post("/api/v1/incidents", status_code=status.HTTP_201_CREATED)
 async def create_incident(payload: IncidentPayload):
@@ -161,6 +171,7 @@ async def create_incident(payload: IncidentPayload):
     incidents_db.insert(0, new_inc)
     INCIDENT_COUNT.labels(severity=payload.severity, component=payload.component).inc()
     return {"message": "Incident logged successfully", "incident": new_inc}
+
 
 @app.post("/api/v1/chaos/trigger")
 async def trigger_chaos(payload: ChaosPayload):
